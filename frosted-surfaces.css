@@ -1,0 +1,102 @@
+/* Approved material: 80% frosted layer over 20% clear scenery.
+   Text stays opaque; the negative layer is contained by each z-index: 0 surface. */
+:root {
+  --frost-wash: #ffffff11;
+  --frost-strength: .8;
+  --frost-blur: 12px;
+  --frost-border: #ffffff50;
+}
+
+/* Fading the glass ancestor blocks backdrop sampling until the fade finishes.
+   Keep the material present from frame one, and fade only the card contents. */
+.chapter {
+  animation-name: frost-arrive;
+}
+.chapter > * {
+  animation: frost-text-in .5s ease;
+}
+@keyframes frost-arrive {
+  from { transform: translateY(10px); }
+  to { transform: translateY(0); }
+}
+@keyframes frost-text-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+:is(.chapter, .option, .choice, .response, .accumulated, .lengths button),
+body:not(.ending-mode) .primary {
+  position: relative;
+  z-index: 0;
+}
+
+:is(.chapter, .option, .choice, .response, .accumulated, .lengths button, .motion-control),
+body:not(.ending-mode) .primary,
+dialog#memories {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:is(.chapter, .option, .choice, .response, .accumulated, .lengths button, .motion-control)::before,
+body:not(.ending-mode) .primary::before,
+dialog#memories::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--frost-wash);
+  -webkit-backdrop-filter: blur(var(--frost-blur));
+  backdrop-filter: blur(var(--frost-blur));
+  opacity: var(--frost-strength);
+}
+
+:is(.option, .choice, .lengths button) {
+  border-color: var(--frost-border);
+}
+body:not(.ending-mode) .primary {
+  color: #fff3df;
+  border: 1px solid var(--frost-border);
+}
+.lengths button.selected {
+  color: #fff3df;
+}
+.option.selected, .lengths button.selected,
+.choice:hover, body:not(.ending-mode) .primary:hover {
+  background: transparent;
+  border-color: #ead4ae;
+}
+.accumulated {
+  border: 1px solid var(--frost-border);
+  border-radius: 15px;
+  padding: 22px 20px;
+}
+
+/* Scroll the memories, keeping the glass and drawer heading stationary. */
+dialog#memories {
+  z-index: 0;
+  overflow: hidden;
+}
+dialog#memories[open] {
+  display: flex;
+  flex-direction: column;
+}
+dialog#memories::backdrop {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+dialog#memories .dialog-head {
+  position: relative;
+  top: auto;
+  flex-shrink: 0;
+  background: transparent;
+}
+dialog#memories #memory-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Keep the approved city postcard, photo border, and share controls as paper. */
