@@ -1,113 +1,55 @@
-/* Floating NetEase Cloud Music toggle. Stays out of the way of 暂停窗景 (top-right)
-   on play screens, and of the letterhead / save bar in ending-mode. */
+/* Circular NetEase cover control: only 许飞's album art and play/pause
+   overlay are visible. The official 330x86 outchain player is scaled and
+   offset so the 66x66 cover at (10,10) fills the circle, with the 32x32
+   play button (#play at 27,27) centered for taps. */
 .music-dock {
   position: fixed;
   top: max(8px, env(safe-area-inset-top));
   left: max(16px, env(safe-area-inset-left));
   z-index: 6;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-start;
-  gap: 8px;
-  pointer-events: none;
-}
-.music-dock > * {
-  pointer-events: auto;
+  width: 44px;
+  height: 44px;
 }
 
 body.ending-mode .music-dock {
   top: auto;
   bottom: max(16px, env(safe-area-inset-bottom));
-  flex-direction: column;
 }
 
-.music-btn {
-  width: 40px;
-  height: 40px;
-  padding: 0;
+.music-circle {
+  position: relative;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
+  overflow: hidden;
   border: 1px solid #fff3;
-  background: #172218bb;
-  color: #eee4d1;
-  font-size: 18px;
-  line-height: 1;
-  display: grid;
-  place-items: center;
+  background: #172218;
+  box-shadow: 0 6px 18px #0004;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  box-shadow: 0 6px 18px #0004;
 }
-.music-btn span {
-  display: block;
-  transform: translateY(1px);
-}
-.music-btn[aria-expanded="true"],
-.music-dock.ready .music-btn {
-  color: #f3d6a4;
-  border-color: #ead4ae;
-}
-.music-btn:focus-visible {
+
+.music-circle:focus-within {
   outline: 2px solid var(--green, #c2d2ac);
   outline-offset: 3px;
 }
 
-.music-panel {
-  width: 330px;
-  max-width: calc(100vw - 32px);
-  padding: 8px;
-  border-radius: 16px;
-  border: 1px solid #fff3;
-  background: #172218cc;
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 10px 30px #0005;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .25s ease, transform .25s ease, visibility .25s;
-}
-body.ending-mode .music-panel {
-  transform: translateY(8px);
-}
-.music-dock.open .music-panel {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  pointer-events: auto;
-}
-
-.music-frame-wrap {
-  container-type: inline-size;
-  width: 100%;
-  aspect-ratio: 330 / 86;
-  overflow: hidden;
-  border-radius: 8px;
-  background: #0b100c;
-}
-.music-frame-wrap iframe {
+.music-circle iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 330px;
   height: 86px;
+  max-width: none;
   border: 0;
   display: block;
-  transform-origin: top left;
-  transform: scale(calc(100cqw / 330));
+  transform-origin: 0 0;
+  /* 44px circle minus 1px border (border-box) => 42px content.
+     Cover is 66px at (10,10); scale 42/66, then shift cover to the origin. */
+  transform: scale(calc(42 / 66)) translate(-10px, -10px);
 }
 
-body.ending-mode .music-btn,
-body.ending-mode .music-panel {
-  background: #2a3328cc;
-  color: #f3ead9;
+body.ending-mode .music-circle {
   border-color: #514a4340;
-}
-body.ending-mode .music-btn[aria-expanded="true"],
-body.ending-mode .music-dock.ready .music-btn {
-  color: #f3d6a4;
-  border-color: #c4a574;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .music-panel {
-    transition: none;
-  }
+  background: #2a3328;
 }
