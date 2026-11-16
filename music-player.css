@@ -1,0 +1,113 @@
+/* Floating NetEase Cloud Music toggle. Stays out of the way of 暂停窗景 (top-right)
+   on play screens, and of the letterhead / save bar in ending-mode. */
+.music-dock {
+  position: fixed;
+  top: max(8px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  z-index: 6;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+.music-dock > * {
+  pointer-events: auto;
+}
+
+body.ending-mode .music-dock {
+  top: auto;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  flex-direction: column;
+}
+
+.music-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid #fff3;
+  background: #172218bb;
+  color: #eee4d1;
+  font-size: 18px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 18px #0004;
+}
+.music-btn span {
+  display: block;
+  transform: translateY(1px);
+}
+.music-btn[aria-expanded="true"],
+.music-dock.ready .music-btn {
+  color: #f3d6a4;
+  border-color: #ead4ae;
+}
+.music-btn:focus-visible {
+  outline: 2px solid var(--green, #c2d2ac);
+  outline-offset: 3px;
+}
+
+.music-panel {
+  width: 330px;
+  max-width: calc(100vw - 32px);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid #fff3;
+  background: #172218cc;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px #0005;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, visibility .25s;
+}
+body.ending-mode .music-panel {
+  transform: translateY(8px);
+}
+.music-dock.open .music-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.music-frame-wrap {
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 330 / 86;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0b100c;
+}
+.music-frame-wrap iframe {
+  width: 330px;
+  height: 86px;
+  border: 0;
+  display: block;
+  transform-origin: top left;
+  transform: scale(calc(100cqw / 330));
+}
+
+body.ending-mode .music-btn,
+body.ending-mode .music-panel {
+  background: #2a3328cc;
+  color: #f3ead9;
+  border-color: #514a4340;
+}
+body.ending-mode .music-btn[aria-expanded="true"],
+body.ending-mode .music-dock.ready .music-btn {
+  color: #f3d6a4;
+  border-color: #c4a574;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-panel {
+    transition: none;
+  }
+}
